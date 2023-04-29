@@ -1,0 +1,21 @@
+environments:
+  default:
+    values:
+      - prometheus:
+          enabled: {{ .Values | get "prometheus.enabled" true }}
+  sandbox:
+    values:
+      - prometheus:
+          enabled: {{ .Values | get "prometheus.enabled" false }}
+---
+repositories:
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+
+releases:
+  - name: prometheus
+    chart: prometheus-community/prometheus
+    namespace: prometheus
+    condition: prometheus.enabled
+    values:
+    - {{ .Values | get "prometheus" dict | toYaml | indent 6 | trim}}
